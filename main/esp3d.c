@@ -38,6 +38,26 @@ void app_main(void)
     sceneInit(&s);
     rendererSetScene(&renderer, &s);
 
+    Object cube1;
+    cube1.mesh = &mesh_cube;
+    sceneAddRenderable(&s, object_as_renderable(&cube1));
+    cube1.material = 0;
+
+    Object cube2;
+    cube2.mesh = &mesh_cube;
+    sceneAddRenderable(&s, object_as_renderable(&cube2));
+
+    //TEXTURE FOR CUBE 2
+    Texture tex;
+    texture_init(&tex, (Vec2i){8,8}, malloc(8*8*sizeof(Pixel)));
+
+    for (int i = 0; i < 8; i++)
+        for (int y = 0; y < 8; y++)
+            ((uint8_t *)tex.frameBuffer)[i * 8 + y ] = (i + y) % 2 == 0 ? 0xFF : 0x00;
+
+    Material m;
+    m.texture = &tex;
+    cube2.material = &m;
 
     Object tea;
     tea.mesh = &mesh_teapot;
@@ -53,9 +73,21 @@ void app_main(void)
         renderer.camera_projection = mat4Perspective( 2, 16.0,(float)size.x / (float)size.y, 50.0);
 
         //VIEW MATRIX - Defines position and orientation of the "camera"
-        Mat4 v = mat4Translate((Vec3f) { 0,0,-5});
+        Mat4 v = mat4Translate((Vec3f) { 0,0,-9});
         Mat4 rotateDown = mat4RotateX(0.40); //Rotate around origin/orbit
         renderer.camera_view = mat4MultiplyM(&rotateDown, &v );
+
+        //CUBE 1 TRANSFORM - Defines position and orientation of the object
+        cube1.transform =  mat4RotateY(phi2 -= 0.08);
+        t = mat4Scale((Vec3f){1,1,1});
+        cube1.transform = mat4MultiplyM(&cube1.transform, &t );
+        t = mat4Translate((Vec3f){-5,0.0,0});
+        cube1.transform = mat4MultiplyM(&cube1.transform, &t );
+
+        //CUBE 2 TRANSFORM - Defines position and orientation of the object
+        cube2.transform =  mat4Translate((Vec3f){5,0.0,0});
+        t = mat4Scale((Vec3f){1,1,1});
+        cube2.transform = mat4MultiplyM(&cube2.transform, &t );
 
         //TEA TRANSFORM - Defines position and orientation of the object
         tea.transform = mat4RotateZ(M_PI);

@@ -21,18 +21,21 @@ idf_component_register(
     "pingo/render/texture.c"
     "pingo/example/cube.c"
     "pingo/example/memorybackend.c"
-    "pingo/example/ttgobackend.c"
     "pingo/example/teapot.c"
 
-    "tft_espi/tft.c"
-    "tft_espi/tftspi.c"
-    "tft_espi/spi_master_lobo.c"
+
+    "pingo/backend/ttgobackend.c"
+
+    "pingo/backend/tft_espi/tft.c"
+    "pingo/backend/tft_espi/tftspi.c"
+    "pingo/backend/tft_espi/spi_master_lobo.c"
 
     INCLUDE_DIRS
     "."
     "pingo/math"
     "pingo/render"
     "pingo/example"
-    "tft_espi"
+    "pingo/backend"
+    "pingo/backend/tft_espi"
     )
 

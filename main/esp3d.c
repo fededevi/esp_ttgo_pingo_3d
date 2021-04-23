@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include "math.h"
 
+#include <sys/time.h>
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "esp_system.h"
@@ -23,6 +24,8 @@
 #include "pingo/math/mat3.h"
 
 
+TickType_t startTime = 0;
+uint32_t frame = 0;
 void app_main(void)
 {
     Vec2i size = {  240, 135 };
@@ -70,6 +73,8 @@ void app_main(void)
     Mat4 t;
 
     while (1) {
+        startTime = xTaskGetTickCount();
+
         // PROJECTION MATRIX - Defines the type of projection used
         renderer.camera_projection = mat4Perspective( 2, 16.0,(float)size.x / (float)size.y, 50.0);
 
@@ -103,6 +108,14 @@ void app_main(void)
         // Render the scene
         rendererRender(&renderer);
 
-        //vTaskDelay(1/ portTICK_PERIOD_MS);
+
+        // Show approximate frame rate
+        if (!(++frame & 255)) {
+          TickType_t elapsed = (xTaskGetTickCount() - startTime) / 1000; // Seconds
+
+            printf("%d", frame / elapsed);
+            printf(" fps\n");
+
+        }
     }
 }

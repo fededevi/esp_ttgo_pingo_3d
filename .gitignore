@@ -6,3 +6,7 @@ build/
 sdkconfig
 
 sdkconfig.old
+
+main/build-Pingo-Desktop_Qt_6_0_3_MinGW_64_bit-Debug/
+
+main/build-Pingo-Desktop_Qt_6_0_3_MSVC2019_64bit-Debug/

@@ -33,6 +33,7 @@ void app_main(void)
     Renderer renderer;
     rendererInit(&renderer, size,(BackEnd*) &mB );
     rendererSetCamera(&renderer,(Vec4i){0,0,size.x,size.y});
+    renderer.clear = false;
 
     Scene s;
     sceneInit(&s);
@@ -81,11 +82,11 @@ void app_main(void)
         cube1.transform =  mat4RotateY(phi2 -= 0.08);
         t = mat4Scale((Vec3f){1,1,1});
         cube1.transform = mat4MultiplyM(&cube1.transform, &t );
-        t = mat4Translate((Vec3f){-5,0.0,0});
+        t = mat4Translate((Vec3f){-3,0.0,0});
         cube1.transform = mat4MultiplyM(&cube1.transform, &t );
 
         //CUBE 2 TRANSFORM - Defines position and orientation of the object
-        cube2.transform =  mat4Translate((Vec3f){5,0.0,0});
+        cube2.transform =  mat4Translate((Vec3f){3,0.0,0});
         t = mat4Scale((Vec3f){1,1,1});
         cube2.transform = mat4MultiplyM(&cube2.transform, &t );
 

@@ -9,6 +9,7 @@
 #include "sdkconfig.h"
 #include "esp_system.h"
 #include "esp_spi_flash.h"
+#include "esp_timer.h"
 
 //PINGO
 #include "pingo/math/vec2.h"
@@ -24,8 +25,6 @@
 #include "pingo/math/mat3.h"
 
 
-TickType_t startTime = 0;
-uint32_t frame = 0;
 void app_main(void)
 {
     Vec2i size = {  240, 135 };
@@ -72,14 +71,18 @@ void app_main(void)
     float phi2 = 0;
     Mat4 t;
 
+    uint32_t frame = 0;
+    uint32_t time0 = esp_timer_get_time();
+
+    float frameRenderTotal = 0;
     while (1) {
-        startTime = xTaskGetTickCount();
+        time0 = (uint32_t)esp_timer_get_time();
 
         // PROJECTION MATRIX - Defines the type of projection used
         renderer.camera_projection = mat4Perspective( 2, 16.0,(float)size.x / (float)size.y, 50.0);
 
         //VIEW MATRIX - Defines position and orientation of the "camera"
-        Mat4 v = mat4Translate((Vec3f) { 0,0,-9});
+        Mat4 v = mat4Translate((Vec3f) { 0,0,-5});
         Mat4 rotateDown = mat4RotateX(0.40); //Rotate around origin/orbit
         renderer.camera_view = mat4MultiplyM(&rotateDown, &v );
 
@@ -106,16 +109,19 @@ void app_main(void)
         s.transform = mat4RotateY(phi += 0.05);
 
         // Render the scene
+
+        printf("F:%d | ", frame++);
+        printf ( "PreRender %dus | ", (uint32_t)esp_timer_get_time()-time0 );
+        time0 = (uint32_t)esp_timer_get_time();
+
         rendererRender(&renderer);
 
+        float FrameMs = ((uint32_t)esp_timer_get_time()-time0) / 1000.0;
+        printf ( "Render %fms | ", FrameMs );
+        frameRenderTotal += FrameMs;
 
-        // Show approximate frame rate
-        if (!(++frame & 255)) {
-          TickType_t elapsed = (xTaskGetTickCount() - startTime) / 1000; // Seconds
+        printf ( "Average %fms \n", frameRenderTotal / frame );
+        time0 = (uint32_t)esp_timer_get_time();
 
-            printf("%d", frame / elapsed);
-            printf(" fps\n");
-
-        }
     }
 }

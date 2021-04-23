@@ -1,0 +1,3 @@
+[submodule "main/pingo"]
+	path = main/pingo
+	url = https://github.com/fededevi/pingo

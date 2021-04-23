@@ -74,7 +74,7 @@ void app_main(void)
     uint32_t frame = 0;
     uint32_t time0 = esp_timer_get_time();
 
-    float frameRenderTotal = 0;
+    uint32_t frameRenderTotal = 0;
     while (1) {
         time0 = (uint32_t)esp_timer_get_time();
 
@@ -109,19 +109,27 @@ void app_main(void)
         s.transform = mat4RotateY(phi += 0.05);
 
         // Render the scene
-
         printf("F:%d | ", frame++);
         printf ( "PreRender %dus | ", (uint32_t)esp_timer_get_time()-time0 );
-        time0 = (uint32_t)esp_timer_get_time();
+
+        time0 = esp_timer_get_time();
 
         rendererRender(&renderer);
 
-        float FrameMs = ((uint32_t)esp_timer_get_time()-time0) / 1000.0;
-        printf ( "Render %fms | ", FrameMs );
+        uint32_t FrameMs = esp_timer_get_time()-time0;
         frameRenderTotal += FrameMs;
 
-        printf ( "Average %fms \n", frameRenderTotal / frame );
-        time0 = (uint32_t)esp_timer_get_time();
+        printf ( "Render %dms | ", FrameMs / 1000 );
 
+        time0 = esp_timer_get_time();
+
+        mB.backend.afterRender(&renderer, &mB);
+
+        uint32_t afterms = esp_timer_get_time()-time0;
+        frameRenderTotal += afterms;
+
+        printf ("AfterRender %dms |", afterms/1000 );
+        printf ("Average %dms  ", (frameRenderTotal / frame) / 1000 );
+        printf ("\n");
     }
 }

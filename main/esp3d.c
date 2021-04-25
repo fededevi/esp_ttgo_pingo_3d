@@ -24,6 +24,8 @@
 #include "pingo/render/object.h"
 #include "pingo/math/mat3.h"
 
+#define GPIO_BTN_L    0
+#define GPIO_BTN_R    35
 
 void app_main(void)
 {
@@ -50,6 +52,14 @@ void app_main(void)
     cube2.mesh = &mesh_cube;
     sceneAddRenderable(&s, object_as_renderable(&cube2));
 
+    Object cube3;
+    cube3.mesh = &mesh_cube;
+    sceneAddRenderable(&s, object_as_renderable(&cube3));
+
+    Object cube4;
+    cube4.mesh = &mesh_cube;
+    sceneAddRenderable(&s, object_as_renderable(&cube4));
+
     //TEXTURE FOR CUBE 2
     Texture tex;
     texture_init(&tex, (Vec2i){8,8}, malloc(8*8*sizeof(Pixel)));
@@ -60,7 +70,10 @@ void app_main(void)
 
     Material m;
     m.texture = &tex;
+    cube1.material = &m;
     cube2.material = &m;
+    cube3.material = &m;
+    cube4.material = &m;
 
     Object tea;
     tea.mesh = &mesh_teapot;
@@ -79,15 +92,15 @@ void app_main(void)
         time0 = (uint32_t)esp_timer_get_time();
 
         // PROJECTION MATRIX - Defines the type of projection used
-        renderer.camera_projection = mat4Perspective( 2, 16.0,(float)size.x / (float)size.y, 50.0);
+        renderer.camera_projection = mat4Perspective( 1, 16.0,(float)size.x / (float)size.y, 40.0);
 
         //VIEW MATRIX - Defines position and orientation of the "camera"
-        Mat4 v = mat4Translate((Vec3f) { 0,0,-5});
-        Mat4 rotateDown = mat4RotateX(0.40); //Rotate around origin/orbit
+        Mat4 v = mat4Translate((Vec3f) { 0,0,-7});
+        Mat4 rotateDown = mat4RotateX(0.30); //Rotate around origin/orbit
         renderer.camera_view = mat4MultiplyM(&rotateDown, &v );
 
         //CUBE 1 TRANSFORM - Defines position and orientation of the object
-        cube1.transform =  mat4RotateY(phi2 -= 0.08);
+        cube1.transform =  mat4RotateY(phi2);
         t = mat4Scale((Vec3f){1,1,1});
         cube1.transform = mat4MultiplyM(&cube1.transform, &t );
         t = mat4Translate((Vec3f){-3,0.0,0});
@@ -98,6 +111,16 @@ void app_main(void)
         t = mat4Scale((Vec3f){1,1,1});
         cube2.transform = mat4MultiplyM(&cube2.transform, &t );
 
+        //CUBE 2 TRANSFORM - Defines position and orientation of the object
+        cube3.transform =  mat4Translate((Vec3f){0,0,-3});
+        t = mat4Scale((Vec3f){1,1,1});
+        cube3.transform = mat4MultiplyM(&cube3.transform, &t );
+
+        //CUBE 2 TRANSFORM - Defines position and orientation of the object
+        cube4.transform =  mat4Translate((Vec3f){0,0,3});
+        t = mat4Scale((Vec3f){1,1,1});
+        cube4.transform = mat4MultiplyM(&cube4.transform, &t );
+
         //TEA TRANSFORM - Defines position and orientation of the object
         tea.transform = mat4RotateZ(M_PI);
         t =mat4RotateY(phi2);
@@ -106,7 +129,9 @@ void app_main(void)
         tea.transform = mat4MultiplyM(&tea.transform, &t );
 
         // Rotate the whole scene a little...
-        s.transform = mat4RotateY(phi += 0.05);
+        phi += 0.01 - (float)gpio_get_level(0) * 0.01;
+
+        s.transform = mat4RotateY(phi);
 
         // Render the scene
         printf("F:%d | ", frame++);
@@ -121,14 +146,14 @@ void app_main(void)
 
         printf ( "Render %dms | ", FrameMs / 1000 );
 
-        time0 = esp_timer_get_time();
+        //time0 = esp_timer_get_time();
 
-        mB.backend.afterRender(&renderer, &mB);
+        //mB.backend.afterRender(&renderer, &mB);
 
-        uint32_t afterms = esp_timer_get_time()-time0;
-        frameRenderTotal += afterms;
+        //uint32_t afterms = esp_timer_get_time()-time0;
+        //frameRenderTotal += afterms;
 
-        printf ("AfterRender %dms |", afterms/1000 );
+        //printf ("AfterRender %dms |", afterms/1000 );
         printf ("Average %dms  ", (frameRenderTotal / frame) / 1000 );
         printf ("\n");
     }

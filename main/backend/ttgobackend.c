@@ -2,13 +2,12 @@
 
 #include "ttgobackend.h"
 
-#include "../render/renderer.h"
-#include "../render/texture.h"
-#include "../render/pixel.h"
-#include "../render/depth.h"
+#include "../pingo/render/renderer.h"
+#include "../pingo/render/texture.h"
+#include "../pingo/render/pixel.h"
+#include "../pingo/render/depth.h"
 
 #include "tft_espi/tft.h"
-
 #include "freertos/task.h"
 
 #define SPI_BUS TFT_VSPI_HOST

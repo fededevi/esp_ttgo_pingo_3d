@@ -17,13 +17,14 @@
 #include "pingo/example/teapot.h"
 #include "pingo/example/cube.h"
 #include "pingo/example/pingo_mesh.h"
-#include "pingo/backend/ttgobackend.h"
 #include "pingo/render/renderer.h"
 #include "pingo/render/texture.h"
 #include "pingo/render/sprite.h"
 #include "pingo/render/scene.h"
 #include "pingo/render/object.h"
 #include "pingo/math/mat3.h"
+
+#include "backend/ttgobackend.h"
 
 #define GPIO_BTN_L    0
 #define GPIO_BTN_R    35
@@ -46,20 +47,20 @@ void app_main(void)
 
     Object cube1;
     cube1.mesh = &mesh_cube;
-    sceneAddRenderable(&s, object_as_renderable(&cube1));
+    //sceneAddRenderable(&s, object_as_renderable(&cube1));
     cube1.material = 0;
 
     Object cube2;
     cube2.mesh = &mesh_cube;
-    sceneAddRenderable(&s, object_as_renderable(&cube2));
+    //sceneAddRenderable(&s, object_as_renderable(&cube2));
 
     Object cube3;
     cube3.mesh = &mesh_cube;
-    sceneAddRenderable(&s, object_as_renderable(&cube3));
+    //sceneAddRenderable(&s, object_as_renderable(&cube3));
 
     Object cube4;
     cube4.mesh = &mesh_cube;
-    sceneAddRenderable(&s, object_as_renderable(&cube4));
+    //sceneAddRenderable(&s, object_as_renderable(&cube4));
 
     //TEXTURE FOR CUBE 2
     Texture tex;
@@ -128,7 +129,7 @@ void app_main(void)
         tea.transform = mat4MultiplyM(&tea.transform, &t );
         t = mat4Scale((Vec3f){0.02,0.02,0.02});
         tea.transform = mat4MultiplyM(&tea.transform, &t );
-        t = mat4Translate((Vec3f){0,1,0});
+        t = mat4Translate((Vec3f){0.16,0.5,0});
         tea.transform = mat4MultiplyM(&tea.transform, &t );
         t = mat4RotateZ(3.1421);
         tea.transform = mat4MultiplyM(&tea.transform, &t );

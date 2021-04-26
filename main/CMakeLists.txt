@@ -22,6 +22,7 @@ idf_component_register(
     "pingo/example/cube.c"
     "pingo/example/memorybackend.c"
     "pingo/example/teapot.c"
+    "pingo/example/pingo_mesh.c"
 
 
     "pingo/backend/ttgobackend.c"

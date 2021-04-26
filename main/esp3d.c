@@ -16,6 +16,7 @@
 #include "pingo/render/mesh.h"
 #include "pingo/example/teapot.h"
 #include "pingo/example/cube.h"
+#include "pingo/example/pingo_mesh.h"
 #include "pingo/backend/ttgobackend.h"
 #include "pingo/render/renderer.h"
 #include "pingo/render/texture.h"
@@ -76,7 +77,7 @@ void app_main(void)
     cube4.material = &m;
 
     Object tea;
-    tea.mesh = &mesh_teapot;
+    tea.mesh = &pingo_mesh;
     sceneAddRenderable(&s, object_as_renderable(&tea));
     tea.material = 0;
 
@@ -95,7 +96,7 @@ void app_main(void)
         renderer.camera_projection = mat4Perspective( 1, 16.0,(float)size.x / (float)size.y, 40.0);
 
         //VIEW MATRIX - Defines position and orientation of the "camera"
-        Mat4 v = mat4Translate((Vec3f) { 0,0,-7});
+        Mat4 v = mat4Translate((Vec3f) { 0,0,-9});
         Mat4 rotateDown = mat4RotateX(0.30); //Rotate around origin/orbit
         renderer.camera_view = mat4MultiplyM(&rotateDown, &v );
 
@@ -122,14 +123,20 @@ void app_main(void)
         cube4.transform = mat4MultiplyM(&cube4.transform, &t );
 
         //TEA TRANSFORM - Defines position and orientation of the object
-        tea.transform = mat4RotateZ(M_PI);
+        tea.transform = mat4RotateZ(3.142128);
         t =mat4RotateY(phi2);
         tea.transform = mat4MultiplyM(&tea.transform, &t );
-        t = mat4Translate((Vec3f){0,-0.5,0});
+        t = mat4Scale((Vec3f){0.02,0.02,0.02});
+        tea.transform = mat4MultiplyM(&tea.transform, &t );
+        t = mat4Translate((Vec3f){0,1,0});
+        tea.transform = mat4MultiplyM(&tea.transform, &t );
+        t = mat4RotateZ(3.1421);
+        tea.transform = mat4MultiplyM(&tea.transform, &t );
+        t = mat4RotateY(3.14217/4);
         tea.transform = mat4MultiplyM(&tea.transform, &t );
 
         // Rotate the whole scene a little...
-        phi += 0.01 - (float)gpio_get_level(0) * 0.01;
+        phi += 0.00 - (float)gpio_get_level(0) * 0.02;
 
         s.transform = mat4RotateY(phi);
 
